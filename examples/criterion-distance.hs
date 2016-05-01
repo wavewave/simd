@@ -12,9 +12,10 @@ import Control.DeepSeq
 import Control.Monad
 import Control.Monad.Random
 import Control.Monad.ST
-import Criterion.Config
+import Criterion
+-- import Criterion.Config
 import Criterion.Main
-import Data.Params
+-- import Data.Params
 import Data.Primitive.ByteArray 
 import qualified Data.Vector as V
 import qualified Data.Vector.Generic as VG
@@ -33,12 +34,14 @@ import Data.SIMD
 
 veclen = 16000
 
+{-
 critConfig = defaultConfig 
     { cfgPerformGC   = ljust True
     , cfgSamples     = ljust 1000
     , cfgSummaryFile = ljust $ "summary"++show veclen++".csv"
     , cfgReport      = ljust $ "report"++show veclen++".html"
     }
+-}
 
 -------------------------------------------------------------------------------
 -- main
@@ -77,27 +80,27 @@ main = do
 
     putStrLn "starting criterion"
 
-    defaultMainWith critConfig (return ())
+    defaultMain {- With critConfig  (return ()) -}
         [ bgroup "VU"
             [ bgroup "Float"
                 [ bench "diff1"                 $ nf (distance_diff1                vuf1) vuf2
                 , bench "diff4"                 $ nf (distance_diff4                vuf1) vuf2
                 , bench "simd4"                 $ nf (distance_unbox_simd4          vuf1) vuf2
                 , bench "simd8"                 $ nf (distance_unbox_simd8          vuf1) vuf2
-                , bench "simd16"                $ nf (distance_unbox_simd16         vuf1) vuf2
+--                , bench "simd16"                $ nf (distance_unbox_simd16         vuf1) vuf2
                 , bench "hof"                   $ nf (distance_hof                  vuf1) vuf2
                 , bench "hof_simd4"             $ nf (distance_unbox_hof_simd4      vuf1) vuf2
                 , bench "hof_simd8"             $ nf (distance_unbox_hof_simd8      vuf1) vuf2
-                , bench "hof_simd16"            $ nf (distance_unbox_hof_simd16     vuf1) vuf2
+--                , bench "hof_simd16"            $ nf (distance_unbox_hof_simd16     vuf1) vuf2
                 ]
             , bgroup "Double"
                 [ bench "diff1"                 $ nf (distance_diff1                vud1) vud2
                 , bench "diff4"                 $ nf (distance_diff4                vud1) vud2
                 , bench "simd4"                 $ nf (distance_unbox_simd4          vud1) vud2
-                , bench "simd8"                 $ nf (distance_unbox_simd8          vud1) vud2
+--                , bench "simd8"                 $ nf (distance_unbox_simd8          vud1) vud2
                 , bench "hof"                   $ nf (distance_hof                  vud1) vud2
                 , bench "hof_simd4"             $ nf (distance_unbox_hof_simd4      vud1) vud2
-                , bench "hof_simd8"             $ nf (distance_unbox_hof_simd8      vud1) vud2
+--                , bench "hof_simd8"             $ nf (distance_unbox_hof_simd8      vud1) vud2
                 ]
             ]
         , bgroup "VS"
@@ -106,20 +109,20 @@ main = do
                 , bench "diff4"                 $ nf (distance_diff4                vsf1) vsf2
                 , bench "simd4"                 $ nf (distance_storable_simd4       vsf1) vsf2
                 , bench "simd8"                 $ nf (distance_storable_simd8       vsf1) vsf2
-                , bench "simd16"                $ nf (distance_storable_simd16      vsf1) vsf2
+--                , bench "simd16"                $ nf (distance_storable_simd16      vsf1) vsf2
                 , bench "hof"                   $ nf (distance_hof                  vsf1) vsf2
                 , bench "hof_simd4"             $ nf (distance_storable_hof_simd4   vsf1) vsf2
-                , bench "hof_simd8"             $ nf (distance_storable_hof_simd8   vsf1) vsf2
-                , bench "hof_simd16"            $ nf (distance_storable_hof_simd16  vsf1) vsf2
+--                , bench "hof_simd8"             $ nf (distance_storable_hof_simd8   vsf1) vsf2
+--                , bench "hof_simd16"            $ nf (distance_storable_hof_simd16  vsf1) vsf2
                 ]
             , bgroup "Double"
                 [ bench "diff1"                 $ nf (distance_diff1                vsd1) vsd2
                 , bench "diff4"                 $ nf (distance_diff4                vsd1) vsd2
                 , bench "simd4"                 $ nf (distance_storable_simd4       vsd1) vsd2
-                , bench "simd8"                 $ nf (distance_storable_simd8       vsd1) vsd2
+--                 , bench "simd8"                 $ nf (distance_storable_simd8       vsd1) vsd2
                 , bench "hof"                   $ nf (distance_hof                  vsd1) vsd2
                 , bench "hof_simd4"             $ nf (distance_storable_hof_simd4   vsd1) vsd2
-                , bench "hof_simd8"             $ nf (distance_storable_hof_simd8   vsd1) vsd2
+--                 , bench "hof_simd8"             $ nf (distance_storable_hof_simd8   vsd1) vsd2
                 ]
             ]
         ]
